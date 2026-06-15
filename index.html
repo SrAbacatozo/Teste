@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>GRAVITY BEAT</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    touch-action: none;
+  }
+  #container {
+    position: relative;
+    width: 480px;
+    height: 720px;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+  }
+  #ui {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 16px;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  #score-display {
+    color: #fff;
+    font-size: 28px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #0ff;
+    letter-spacing: 2px;
+  }
+  #level-display {
+    color: #0ff;
+    font-size: 14px;
+    text-align: right;
+    text-shadow: 0 0 8px #0ff;
+    letter-spacing: 1px;
+  }
+  #bpm-display {
+    color: #f0f;
+    font-size: 12px;
+    text-align: right;
+    margin-top: 4px;
+    text-shadow: 0 0 8px #f0f;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    text-align: center;
+    padding: 32px;
+  }
+  #overlay h1 {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #0ff;
+    text-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+    margin-bottom: 8px;
+  }
+  #overlay .subtitle {
+    font-size: 14px;
+    color: #f0f;
+    letter-spacing: 4px;
+    margin-bottom: 40px;
+    text-shadow: 0 0 10px #f0f;
+  }
+  #overlay .instructions {
+    font-size: 13px;
+    color: #aaa;
+    line-height: 2;
+    margin-bottom: 32px;
+    max-width: 320px;
+  }
+  #overlay .instructions span {
+    color: #0ff;
+    font-weight: bold;
+  }
+  #btn-play {
+    background: transparent;
+    border: 2px solid #0ff;
+    color: #0ff;
+    font-size: 20px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+    padding: 14px 40px;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px #0ff;
+    box-shadow: 0 0 20px #0ff44, inset 0 0 20px #0ff11;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+  }
+  #btn-play:hover {
+    background: #0ff22;
+    box-shadow: 0 0 30px #0ff, inset 0 0 30px #0ff22;
+  }
+  #btn-endless {
+    background: transparent;
+    border: 2px solid #f0f;
+    color: #f0f;
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    padding: 10px 28px;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px #f0f;
+    transition: all 0.2s;
+  }
+  #btn-endless:hover {
+    background: #f0f11;
+    box-shadow: 0 0 20px #f0f;
+  }
+  #overlay.hidden { display: none; }
+
+  #gameover {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.9);
+    color: #fff;
+    text-align: center;
+    padding: 32px;
+  }
+  #gameover h2 {
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #f33;
+    text-shadow: 0 0 20px #f33;
+    margin-bottom: 16px;
+  }
+  #gameover .go-score {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  #gameover .go-best {
+    font-size: 14px;
+    color: #0ff;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    text-shadow: 0 0 8px #0ff;
+  }
+  #gameover .go-phase {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+  #btn-retry {
+    background: transparent;
+    border: 2px solid #0ff;
+    color: #0ff;
+    font-size: 18px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+    padding: 12px 36px;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px #0ff;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+  }
+  #btn-retry:hover { box-shadow: 0 0 20px #0ff; }
+  #btn-menu {
+    background: transparent;
+    border: 1px solid #555;
+    color: #888;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    padding: 8px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  #btn-menu:hover { color: #fff; border-color: #fff; }
+  #gameover.hidden { display: none; }
+
+  #beat-flash {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(ellipse at center, #fff2 0%, transparent 70%);
+    transition: opacity 0.05s;
+  }
+
+  #combo-display {
+    position: absolute;
+    bottom: 80px;
+    left: 0; right: 0;
+    text-align: center;
+    pointer-events: none;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ff0;
+    text-shadow: 0 0 12px #ff0;
+    letter-spacing: 3px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  @media (max-width: 500px) {
+    #container { width: 100vw; height: 100vh; }
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <canvas id="gameCanvas" width="480" height="720"></canvas>
+
+  <div id="ui">
+    <div id="score-display">0</div>
+    <div>
+      <div id="level-display">FASE 1</div>
+      <div id="bpm-display">BPM 120</div>
+    </div>
+  </div>
+
+  <div id="beat-flash"></div>
+  <div id="combo-display"></div>
+
+  <div id="overlay">
+    <h1>GRAVITY<br>BEAT</h1>
+    <div class="subtitle">// TUNNEL RUNNER //</div>
+    <div class="instructions">
+      Corra pelo túnel e mude de parede<br>
+      para desviar dos obstáculos.<br><br>
+      <span>← ESQUERDA</span> · muda parede esq.<br>
+      <span>DIREITA →</span> · muda parede dir.<br>
+      <span>TAP</span> esquerdo/direito na tela<br><br>
+      A música acelera conforme você avança.
+    </div>
+    <button id="btn-play">▶ JOGAR</button>
+    <button id="btn-endless">∞ MODO INFINITO</button>
+  </div>
+
+  <div id="gameover" class="hidden">
+    <h2>GAME OVER</h2>
+    <div class="go-score" id="go-score-val">0 PTS</div>
+    <div class="go-best" id="go-best-val">RECORDE: 0</div>
+    <div class="go-phase" id="go-phase-val"></div>
+    <button id="btn-retry">↺ TENTAR NOVAMENTE</button>
+    <button id="btn-menu">MENU</button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

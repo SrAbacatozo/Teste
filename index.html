@@ -135,6 +135,16 @@
   #tz-right { right:0; background:linear-gradient(-90deg,#ff00e6,transparent);}
 
   #flash { position:absolute; inset:0; pointer-events:none; background:#fff; opacity:0; }
+
+  #jump-btn {
+    position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
+    display:none; z-index:5;
+    font-family:inherit; font-weight:800; letter-spacing:2px; font-size:15px;
+    color:#7dffa0; background:#0a1f14cc; border:2px solid #7dffa0;
+    border-radius:40px; padding:12px 30px; cursor:pointer;
+    box-shadow:0 0 22px #7dffa066, inset 0 0 16px #7dffa022;
+  }
+  #jump-btn:active { transform:translateX(-50%) scale(.92); background:#7dffa033; }
 </style>
 </head>
 <body>
@@ -145,6 +155,7 @@
     <div class="tz" id="tz-left"></div>
     <div class="tz" id="tz-right"></div>
   </div>
+  <button id="jump-btn">⤒ PULAR</button>
 
   <div id="hud">
     <div>
@@ -166,10 +177,11 @@
     <div class="subtitle">TUNNEL RUNNER</div>
     <div class="instructions">
       Você corre por um túnel e a <b>gravidade</b> te prende nas paredes.<br>
-      Gire ao redor do túnel para fugir dos obstáculos no ritmo da música.<br><br>
-      <span class="key">←</span> <span class="key">A</span> gira anti-horário<br>
-      <span class="key">→</span> <span class="key">D</span> gira horário<br>
-      <b>Toque</b> na metade esquerda/direita da tela<br><br>
+      Gire ao redor do túnel para escapar dos <b style="color:#ff3a5e">muros</b> e
+      <b style="color:#ffae00">pule</b> as barreiras baixas, no ritmo da música.<br><br>
+      <span class="key">←</span> <span class="key">A</span> girar &nbsp;·&nbsp; <span class="key">→</span> <span class="key">D</span> girar<br>
+      <span class="key">␣</span> <span class="key">↑</span> <b style="color:#7dffa0">PULAR</b><br>
+      <b>Toque</b> esq/dir p/ girar &nbsp;·&nbsp; <b>arraste p/ cima</b> p/ pular<br><br>
       A música acelera conforme você avança. 🔊
     </div>
     <button class="btn btn-primary" id="btn-play">▶ Jogar</button>
